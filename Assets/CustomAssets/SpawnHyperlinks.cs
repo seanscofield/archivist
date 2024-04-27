@@ -2,51 +2,119 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SpawnHyperlinks : MonoBehaviour
 {
     [SerializeField] private ARTrackedImageManager m_TrackedImageManager;
 
-    [SerializeField] private GameObject prefabToSpawn;
-    private bool hasSpawned = false;  
+    [SerializeField] private GameObject hyperlinkOverlayPrefab;
 
-    private void OnEnable() => m_TrackedImageManager.trackedImagesChanged += OnChanged;
-    private void OnDisable() => m_TrackedImageManager.trackedImagesChanged -= OnChanged;
+    private ARTrackedImage currentlyTrackedARImage;
+
+    // Create a dictionary to store the hyperlink url and spatial coordinates of each AR hyperlink overlay
+    private List<OverlayData> currentOverlayInformation = new List<OverlayData>();
+    private List<GameObject> currentOverlays = new List<GameObject>();
+
+    private string lastDetectedQRCodeData;
+
+
+    // Listen for the following events:
+    //   1. QR code detected
+    //   2. AR image marker tracking updates
+    private void OnEnable() {
+        m_TrackedImageManager.trackedImagesChanged += OnChanged;
+        QRCodeDetector.QRCodeDetectedEvent += OnQRCodeDetected;
+    }
+
+    private void OnDisable() {
+        m_TrackedImageManager.trackedImagesChanged -= OnChanged;
+        QRCodeDetector.QRCodeDetectedEvent -= OnQRCodeDetected;
+    }
+
+    private void OnQRCodeDetected(string data)
+    {
+        Debug.Log("QR Code Detected: " + data);
+
+        // If a detected QR code is different than the previously detected QR code, then
+        // we should reset the OverlayData list, and destroy any Overlay game objects that
+        // were previously spawned 
+        if (data != lastDetectedQRCodeData) {
+
+            // updated last detected QR code
+            lastDetectedQRCodeData = data;
+
+            string jsonString = data;
+
+            OverlayManager overlayManager = new OverlayManager(); // Assuming you have an OverlayManager
+            OverlayData myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
+
+
+            // Reset OverlayData list
+            currentOverlayInformation = new List<OverlayData>();
+
+            Debug.Log("Overlay details:");
+            Debug.Log(myOverlayData.scale);
+            Debug.Log(myOverlayData.offset);
+            currentOverlayInformation.Add(myOverlayData);
+            // currentOverlayInformation.Add(new OverlayData(new Vector3(0.08f, 0.001f, 0.015f), new Vector3(-0.0335f, 0.0f, -0.143f), "https://www.google.com", "1"));
+            // currentOverlayInformation.Add(new OverlayData(new Vector3(0.08f, 0.001f, 0.015f), new Vector3(0.0f, 0.0f, 0.0f), "https://www.yahoo.com", "2"));
+
+            // Destroy previously spawned Overlay game objects
+            foreach (GameObject obj in currentOverlays)
+            {
+                // Check if the object is not null before attempting to destroy it
+                if (obj != null)
+                {
+                    // Destroy the object
+                    Destroy(obj);
+                }
+            }
+
+            currentOverlays = new List<GameObject>();
+        }
+    }
 
     private void OnChanged(ARTrackedImagesChangedEventArgs eventArgs)
     {
+        // TODO: Handle case when more than 1 AR marker image is visible (shouldn't happen in most cases)
+        
         foreach (var newImage in eventArgs.added)
         {
-           Debug.Log("Newly tracked AR marker:");
-           Debug.Log(newImage);
-
-            // Spawn 2 "interactive hyperlinks" on or near the tracked AR marker
-            if (!hasSpawned) 
+            Debug.Log("Event: Image added!");
+            currentlyTrackedARImage = newImage;
+            if (currentOverlays.Count == 0 && currentOverlayInformation.Count > 0)
             {
-                // Spawn one or more prefabs, setting the AR marker as their parent
-                // (so that when the marker moves on the screen, so do the prefabs)
-                GameObject hyperlink_1 = Instantiate(prefabToSpawn, newImage.transform);
-                GameObject hyperlink_2 = Instantiate(prefabToSpawn, newImage.transform);
-
-                hasSpawned = true; // not currently used, but we could potetially use this
-
-                // Try moving the second hyperlink object further down, and making it
-                // a rectangle instead of a square
-                Vector3 offset = new Vector3(-0.0335f, 0.0f, -0.143f);
-                Vector3 scale = new Vector3(0.08f, 0.001f, 0.015f);
-                hyperlink_2.transform.localPosition = offset;
-                hyperlink_2.transform.localScale = scale;
+                SpawnOverlays();
             }
         }
 
         foreach (var updatedImage in eventArgs.updated)
         {
-           // Existing code to update the rectangle's position would go here
+            // Debug.Log("Event: Image updated!");
+            if (currentOverlays.Count == 0 && currentOverlayInformation.Count > 0)
+            {
+                SpawnOverlays();
+            }
         }
 
         foreach (var removedImage in eventArgs.removed)
         {
-           // Handle removed event - e.g., destroy spawned object(s)?
+            // Debug.Log("Event: Image removed!");
+            currentlyTrackedARImage = null;
+        }
+    }
+
+    private void SpawnOverlays() {
+        Debug.Log("Spawning overlays...");
+        foreach (var overlayData in currentOverlayInformation)
+        {
+            GameObject hyperlinkOverlay = Instantiate(hyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
+            Vector3 offset = overlayData.offset;
+            Vector3 scale = overlayData.scale;
+            hyperlinkOverlay.transform.localPosition = offset;
+            hyperlinkOverlay.transform.localScale = scale;
+            currentOverlays.Add(hyperlinkOverlay);
         }
     }
 

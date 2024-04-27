@@ -243,8 +243,6 @@ GameObject:
   - component: {fileID: 138336791}
   - component: {fileID: 138336790}
   - component: {fileID: 138336795}
-  - component: {fileID: 138336796}
-  - component: {fileID: 138336797}
   m_Layer: 0
   m_Name: AR Camera
   m_TagString: MainCamera
@@ -414,33 +412,6 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
---- !u!114 &138336796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 138336788}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d77dc1e4c3cba416f81debaf403b3cb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 138336789}
---- !u!114 &138336797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 138336788}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe233afe9b36c445e9a64fb1ee7952de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_shouldCaptureOnNextFrame: 0
-  m_lastCapturedColors: []
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -619,7 +590,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125729850}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4dea56a9eaadd1c439095de4f9a371cb, type: 3}
   m_Name: 
@@ -635,13 +606,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125729850}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb1455f7ef01c4a1597e9a98a19bf9ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_TrackedImageManager: {fileID: 1125729853}
-  prefabToSpawn: {fileID: 3100121263147063693, guid: 2ff24b4ef83ac4d9ab4a3b21dfba6d75,
+  hyperlinkOverlayPrefab: {fileID: 3100121263147063693, guid: 2ff24b4ef83ac4d9ab4a3b21dfba6d75,
     type: 3}
 --- !u!114 &1125729855
 MonoBehaviour:
@@ -656,9 +627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CameraManager: {fileID: 138336791}
-  debugRawImage: {fileID: 1405341844}
-  savePath: Assets/SavedImages/
-  pngFilePath: Assets/SavedImages/screenshot.png
+  acquisitionCooldown: 1
 --- !u!1 &1167446570
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,6 +876,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b2971a22883b4f1285b3efdbf81ed2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  webcamTexture: {fileID: 0}
+  QrCode: 
   beepSound: {fileID: 0}
 --- !u!114 &1624079427
 MonoBehaviour:
