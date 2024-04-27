@@ -9,21 +9,12 @@ using UnityEngine.UI;
 using System.IO;
 using Unity.Collections.LowLevel.Unsafe;
 
-public class QRCodeScanner : MonoBehaviour
+public class QRCodeDetector : MonoBehaviour
 {
     public ARCameraManager m_CameraManager;
 
-    // public string savePath = ""; // Path to save the image
-    // public string pngFilePath = "Assets/SavedImages/qr4.png"; // Path to the PNG file
-
     public float acquisitionCooldown = 1.0f; // Cooldown period in seconds
     private float lastAcquisitionTime = 0.0f;
-
-    void Start()
-    {
-        // Load the PNG file into Texture2D
-        // LoadPNGFile(pngFilePath);
-    }
 
     void Update()
     {
@@ -35,13 +26,10 @@ public class QRCodeScanner : MonoBehaviour
                 lastAcquisitionTime = Time.time; // Update last acquisition time
                 StartCoroutine(DecodeQRCode(image));
 
-                // It is safe to dispose the image before the async operation completes
+                // Dispose the XRCpuImage after we're finished to prevent any memory leaks
                 image.Dispose();
             }
         }
-
-        // Dispose the XRCpuImage after we're finished to prevent any memory leaks
-        // image.Dispose();
     }
 
 IEnumerator DecodeQRCode(XRCpuImage image)
@@ -142,40 +130,4 @@ IEnumerator DecodeQRCode(XRCpuImage image)
         File.WriteAllBytes(filePath, bytes);
         Debug.Log("Saved texture to: " + filePath);
     }
-
-    // void LoadPNGFile(string filePath)
-    // {
-    //     if (File.Exists(filePath))
-    //     {
-    //         byte[] fileData = File.ReadAllBytes(filePath);
-    //         m_Texture = new Texture2D(2, 2); // Create a new Texture2D
-    //         m_Texture.LoadImage(fileData); // Load the PNG data into the Texture2D
-
-    //         // Decode the loaded texture
-    //         DecodeTexture(m_Texture);
-    //     }
-    //     else
-    //     {
-    //         Debug.LogError("PNG file not found at path: " + filePath);
-    //     }
-    // }
-
-    // void DecodeTexture(Texture2D texture)
-    // {
-    //     // Decode QR Code using ZXing
-    //     var barcodeReader = new BarcodeReader();
-    //     var result = barcodeReader.Decode(texture.GetPixels32(), texture.width, texture.height);
-
-    //     if (result != null)
-    //     {
-    //         Debug.Log("QR Code Text: " + result.Text);
-    //         // Process the QR code text here...
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("No QR Code detected in the PNG image.");
-    //     }
-
-    //     // SaveTextureToFile(m_Texture, savePath);
-    // }
 }
