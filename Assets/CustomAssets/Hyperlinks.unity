@@ -876,9 +876,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b2971a22883b4f1285b3efdbf81ed2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  webcamTexture: {fileID: 0}
-  QrCode: 
-  beepSound: {fileID: 0}
 --- !u!114 &1624079427
 MonoBehaviour:
   m_ObjectHideFlags: 0

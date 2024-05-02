@@ -47,16 +47,17 @@ public class SpawnHyperlinks : MonoBehaviour
             string jsonString = data;
 
             OverlayManager overlayManager = new OverlayManager(); // Assuming you have an OverlayManager
-            OverlayData myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
+            List<OverlayData> myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
 
 
             // Reset OverlayData list
-            currentOverlayInformation = new List<OverlayData>();
+            // currentOverlayInformation = new List<OverlayData>();
 
             Debug.Log("Overlay details:");
-            Debug.Log(myOverlayData.scale);
-            Debug.Log(myOverlayData.offset);
-            currentOverlayInformation.Add(myOverlayData);
+            // Debug.Log(myOverlayData.scale);
+            // Debug.Log(myOverlayData.offset);
+            currentOverlayInformation = myOverlayData;
+            // currentOverlayInformation.Add(myOverlayData);
             // currentOverlayInformation.Add(new OverlayData(new Vector3(0.08f, 0.001f, 0.015f), new Vector3(-0.0335f, 0.0f, -0.143f), "https://www.google.com", "1"));
             // currentOverlayInformation.Add(new OverlayData(new Vector3(0.08f, 0.001f, 0.015f), new Vector3(0.0f, 0.0f, 0.0f), "https://www.yahoo.com", "2"));
 
@@ -91,7 +92,7 @@ public class SpawnHyperlinks : MonoBehaviour
 
         foreach (var updatedImage in eventArgs.updated)
         {
-            // Debug.Log("Event: Image updated!");
+            Debug.Log("Event: Image updated!");
             if (currentOverlays.Count == 0 && currentOverlayInformation.Count > 0)
             {
                 SpawnOverlays();
@@ -100,7 +101,7 @@ public class SpawnHyperlinks : MonoBehaviour
 
         foreach (var removedImage in eventArgs.removed)
         {
-            // Debug.Log("Event: Image removed!");
+            Debug.Log("Event: Image removed!");
             currentlyTrackedARImage = null;
         }
     }
@@ -109,6 +110,7 @@ public class SpawnHyperlinks : MonoBehaviour
         Debug.Log("Spawning overlays...");
         foreach (var overlayData in currentOverlayInformation)
         {
+            // Debug.Log()
             GameObject hyperlinkOverlay = Instantiate(hyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
             Vector3 offset = overlayData.offset;
             Vector3 scale = overlayData.scale;

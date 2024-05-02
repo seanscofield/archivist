@@ -17,8 +17,10 @@ public class QRCodeDetector : MonoBehaviour
 {
     public ARCameraManager m_CameraManager;
 
-    public float acquisitionCooldown = 1.0f; // Cooldown period in seconds
+    public float acquisitionCooldown = 5.0f; // Cooldown period in seconds
     private float lastAcquisitionTime = 0.0f;
+
+    private BarcodeReader barcodeReader = new BarcodeReader();
 
     public string lastDetectedQRCodeData { get; private set; }
 
@@ -38,6 +40,8 @@ public class QRCodeDetector : MonoBehaviour
             {
                 // If successful, launch an asynchronous conversion coroutine
                 lastAcquisitionTime = Time.time; // Update last acquisition time
+                Debug.Log("STARTING COROUTINE...");
+                Debug.Log(Time.time);
                 StartCoroutine(DecodeQRCode(image));
 
                 // Dispose the XRCpuImage after we're finished to prevent any memory leaks
@@ -94,10 +98,10 @@ public class QRCodeDetector : MonoBehaviour
         texture.Apply();
 
         // Dispose the request including raw data
+        Debug.Log("DISPOSING OF REQUEST...");
         request.Dispose();
 
         // Decode QR Code using ZXing
-        var barcodeReader = new BarcodeReader();
         var result = barcodeReader.Decode(texture.GetPixels32(), texture.width, texture.height);
 
         if (result != null)
@@ -110,5 +114,7 @@ public class QRCodeDetector : MonoBehaviour
         {
             // Debug.Log("No QR Code detected.");
         }
+
+        Destroy(texture);
     }
 }

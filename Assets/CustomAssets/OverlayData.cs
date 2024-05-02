@@ -18,8 +18,7 @@ public class OverlayData
     }
 }
 
-
-[System.Serializable] // Mark it as serializable for JsonUtility 
+[System.Serializable]
 public class VectorData
 {
     public float x;
@@ -27,31 +26,48 @@ public class VectorData
     public float z;
 }
 
-
-
-public class OverlayManager // Or whatever class is appropriate
+[System.Serializable]
+public class OverlayDataWrapper
 {
-    public OverlayData CreateOverlayDataFromJson(string jsonString)
-    {
-        // Step 1: Deserialize the JSON while using the VectorData helper
-        var jsonData = JsonUtility.FromJson<OverlayDataWrapper>(jsonString);
+    public List<OverlayDataItem> hyperlinks;
+}
 
-        // Step 2: Create the OverlayData object using the deserialized data
-        return new OverlayData(
-            new Vector3(jsonData.scale.x, jsonData.scale.y, jsonData.scale.z),
-            new Vector3(jsonData.offset.x, jsonData.offset.y, jsonData.offset.z),
-            jsonData.url,
-            jsonData.id
-        );
+[System.Serializable]
+public class OverlayDataItem
+{
+    public VectorData scale;
+    public VectorData offset;
+    public string url;
+    public string id;
+
+    public OverlayData ToOverlayData()
+    {
+        Vector3 scaleVector = new Vector3(scale.x, scale.y, scale.z);
+        Vector3 offsetVector = new Vector3(offset.x, offset.y, offset.z);
+        return new OverlayData(scaleVector, offsetVector, url, id);
     }
+}
 
-    // Wrapper class to match the JSON structure
-    [System.Serializable] 
-    private class OverlayDataWrapper 
+public class OverlayManager
+{
+    public List<OverlayData> CreateOverlayDataFromJson(string jsonString)
     {
-        public VectorData scale;
-        public VectorData offset;
-        public string url;
-        public string id; 
+        // Step 1: Deserialize the JSON into an OverlayDataWrapper object
+        var jsonDataWrapper = JsonUtility.FromJson<OverlayDataWrapper>(jsonString);
+
+        // Step 2: Create a list to hold the OverlayData objects
+        List<OverlayData> overlayDataList = new List<OverlayData>();
+
+        // Step 3: Iterate over each item in the nested array and create OverlayData objects
+        Debug.Log("HERE");
+        foreach (var overlayDataItem in jsonDataWrapper.hyperlinks)
+        {
+            Debug.Log("THERE");
+            Debug.Log(overlayDataItem);
+            OverlayData overlayData = overlayDataItem.ToOverlayData();
+            overlayDataList.Add(overlayData);
+        }
+
+        return overlayDataList;
     }
 }
