@@ -36,6 +36,7 @@ Library: /Users/seanscofield/Downloads/VUB/Spring 2024/Next-gen UI/project/ARchi
 --assembly-defines=Unity.XR.Interaction.Toolkit.Samples.StarterAssets;
 --assembly-defines=Unity.XR.Management;
 --assembly-defines=UnityEngine;
+--assembly-defines=zxing.unity;
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/seanscofield/Downloads/VUB/Spring 2024/Next-gen UI/project/ARchivist/Temp/Burst
 --key-folder=/Applications/Unity/Hub/Editor/2022.3.22f1/PlaybackEngines/AndroidPlayer
@@ -80,6 +81,7 @@ Library: /Users/seanscofield/Downloads/VUB/Spring 2024/Next-gen UI/project/ARchi
 --assembly-defines=Unity.XR.Interaction.Toolkit.Samples.StarterAssets;
 --assembly-defines=Unity.XR.Management;
 --assembly-defines=UnityEngine;
+--assembly-defines=zxing.unity;
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/seanscofield/Downloads/VUB/Spring 2024/Next-gen UI/project/ARchivist/Temp/Burst
 --key-folder=/Applications/Unity/Hub/Editor/2022.3.22f1/PlaybackEngines/AndroidPlayer

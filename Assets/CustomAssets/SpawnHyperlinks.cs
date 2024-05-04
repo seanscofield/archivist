@@ -49,17 +49,8 @@ public class SpawnHyperlinks : MonoBehaviour
             OverlayManager overlayManager = new OverlayManager(); // Assuming you have an OverlayManager
             List<OverlayData> myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
 
-
-            // Reset OverlayData list
-            // currentOverlayInformation = new List<OverlayData>();
-
             Debug.Log("Overlay details:");
-            // Debug.Log(myOverlayData.scale);
-            // Debug.Log(myOverlayData.offset);
             currentOverlayInformation = myOverlayData;
-            // currentOverlayInformation.Add(myOverlayData);
-            // currentOverlayInformation.Add(new OverlayData(new Vector3(0.08f, 0.001f, 0.015f), new Vector3(-0.0335f, 0.0f, -0.143f), "https://www.google.com", "1"));
-            // currentOverlayInformation.Add(new OverlayData(new Vector3(0.08f, 0.001f, 0.015f), new Vector3(0.0f, 0.0f, 0.0f), "https://www.yahoo.com", "2"));
 
             // Destroy previously spawned Overlay game objects
             foreach (GameObject obj in currentOverlays)
