@@ -3,6 +3,7 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 public class SpawnHyperlinks : MonoBehaviour
 {
@@ -44,26 +45,15 @@ public class SpawnHyperlinks : MonoBehaviour
             // updated last detected QR code
             lastDetectedQRCodeData = data;
 
-            string jsonString = data;
+            string url = data;
 
-            OverlayManager overlayManager = new OverlayManager(); // Assuming you have an OverlayManager
-            List<OverlayData> myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
+            // OverlayManager overlayManager = new OverlayManager(); // Assuming you have an OverlayManager
+            // List<OverlayData> myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
 
-            Debug.Log("Overlay details:");
-            currentOverlayInformation = myOverlayData;
+            // Debug.Log("Overlay details:");
+            // currentOverlayInformation = myOverlayData;
 
-            // Destroy previously spawned Overlay game objects
-            foreach (GameObject obj in currentOverlays)
-            {
-                // Check if the object is not null before attempting to destroy it
-                if (obj != null)
-                {
-                    // Destroy the object
-                    Destroy(obj);
-                }
-            }
-
-            currentOverlays = new List<GameObject>();
+            StartCoroutine(FetchJSONFromUrl(url));
         }
     }
 
@@ -111,6 +101,62 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
+    IEnumerator FetchJSONFromUrl(string url)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError($"Error fetching JSON from URL: {www.error}");
+            }
+            else
+            {
+                currentOverlayInformation = new List<OverlayData>();
+
+                ARData jsonData = JsonUtility.FromJson<ARData>(www.downloadHandler.text);
+
+                float[] markerCoords = jsonData.ar_marker_coordinates;
+
+                foreach (Page page in jsonData.pages)
+                {
+                    foreach (Hyperlink hyperlink in page.hyperlinks)
+                    {
+                        float[] hyperlinkCoords = hyperlink.coordinates;
+
+                        float[] scale = CoordinateConverter.CalculateHyperlinkScale(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
+                                                                hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
+                        float[] offset = CoordinateConverter.CalculateHyperlinkOffset(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
+                                                                hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
+
+                        Debug.Log($"Hyperlink URI: {hyperlink.uri}");
+                        Debug.Log($"Scale - X: {scale[0]}, Z: {scale[1]}");
+                        Debug.Log($"Offset - X: {offset[0]}, Z: {offset[1]}");
+
+                        Vector3 scaleVector3 = new Vector3(scale[0], 0.001f, scale[1]);
+                        Vector3 offsetVector3 = new Vector3(offset[0], 0.0f, offset[1]);
+                        OverlayData newOverlayData = new OverlayData(scaleVector3, offsetVector3, hyperlink.uri, "<random-id>");
+                        currentOverlayInformation.Add(newOverlayData);
+                    }
+                }
+
+                // Destroy previously spawned Overlay game objects
+                foreach (GameObject obj in currentOverlays)
+                {
+                    // Check if the object is not null before attempting to destroy it
+                    if (obj != null)
+                    {
+                        // Destroy the object
+                        Destroy(obj);
+                    }
+                }
+
+                currentOverlays = new List<GameObject>();
+            }
+        }
+    }
+
     // The below methods are sometimes useful for debugging.
     // void ListAllImages()
     // {
@@ -128,4 +174,5 @@ public class SpawnHyperlinks : MonoBehaviour
     // void Update() {
         // ListAllImages();
     // }
+
 }

@@ -2,6 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Define classes to represent JSON structure
+[System.Serializable]
+public class ARData
+{
+    public float[] ar_marker_coordinates;
+    public List<Page> pages;
+}
+
+[System.Serializable]
+public class Page
+{
+    public List<Hyperlink> hyperlinks;
+}
+
+[System.Serializable]
+public class Hyperlink
+{
+    public string uri;
+    public float[] coordinates;
+}
+
 public class CoordinateConverter : MonoBehaviour
 {
 private string jsonString = @"
@@ -39,32 +60,12 @@ private string jsonString = @"
                 Debug.Log($"Hyperlink URI: {hyperlink.uri}");
                 Debug.Log($"Scale - X: {scale[0]}, Z: {scale[1]}");
                 Debug.Log($"Offset - X: {offset[0]}, Z: {offset[1]}");
+
             }
         }
     }
 
-    // Define classes to represent JSON structure
-    [System.Serializable]
-    public class ARData
-    {
-        public float[] ar_marker_coordinates;
-        public List<Page> pages;
-    }
-
-    [System.Serializable]
-    public class Page
-    {
-        public List<Hyperlink> hyperlinks;
-    }
-
-    [System.Serializable]
-    public class Hyperlink
-    {
-        public string uri;
-        public float[] coordinates;
-    }
-
-    float[] CalculateHyperlinkOffset(float marker_x0, float marker_y0, float marker_x1, float marker_y1,
+    public static float[] CalculateHyperlinkOffset(float marker_x0, float marker_y0, float marker_x1, float marker_y1,
                                      float hyperlink_x0, float hyperlink_y0, float hyperlink_x1, float hyperlink_y1)
     {
         float marker_width = marker_x1 - marker_x0;
@@ -91,7 +92,7 @@ private string jsonString = @"
         return new float[] { x_offset_m, y_offset_m };
     }
 
-    float[] CalculateHyperlinkScale(float marker_x0, float marker_y0, float marker_x1, float marker_y1,
+    public static float[] CalculateHyperlinkScale(float marker_x0, float marker_y0, float marker_x1, float marker_y1,
                                     float hyperlink_x0, float hyperlink_y0, float hyperlink_x1, float hyperlink_y1)
     {
         float marker_width = marker_x1 - marker_x0;
