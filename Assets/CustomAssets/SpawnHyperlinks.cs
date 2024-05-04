@@ -33,6 +33,13 @@ public class SpawnHyperlinks : MonoBehaviour
         QRCodeDetector.QRCodeDetectedEvent -= OnQRCodeDetected;
     }
 
+    [System.Serializable]
+    public class QRData
+    {
+        public string url;
+        public int page;
+    }
+
     private void OnQRCodeDetected(string data)
     {
         Debug.Log("QR Code Detected: " + data);
@@ -40,20 +47,21 @@ public class SpawnHyperlinks : MonoBehaviour
         // If a detected QR code is different than the previously detected QR code, then
         // we should reset the OverlayData list, and destroy any Overlay game objects that
         // were previously spawned 
-        if (data != lastDetectedQRCodeData) {
-
+        if (data != lastDetectedQRCodeData)
+        {
             // updated last detected QR code
             lastDetectedQRCodeData = data;
 
-            string url = data;
+            // Parse JSON string to extract URL and page number
+            QRData qrData = JsonUtility.FromJson<QRData>(data);
 
-            // OverlayManager overlayManager = new OverlayManager(); // Assuming you have an OverlayManager
-            // List<OverlayData> myOverlayData = overlayManager.CreateOverlayDataFromJson(jsonString);
+            string url = qrData.url;
+            int page = qrData.page;
 
-            // Debug.Log("Overlay details:");
-            // currentOverlayInformation = myOverlayData;
+            Debug.Log(url);
+            Debug.Log(page);
 
-            StartCoroutine(FetchJSONFromUrl(url));
+            StartCoroutine(FetchJSONFromUrl(url, page));
         }
     }
 
@@ -101,7 +109,7 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
-    IEnumerator FetchJSONFromUrl(string url)
+    IEnumerator FetchJSONFromUrl(string url, int pageNum)
     {
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
@@ -119,25 +127,32 @@ public class SpawnHyperlinks : MonoBehaviour
 
                 float[] markerCoords = jsonData.ar_marker_coordinates;
 
-                foreach (Page page in jsonData.pages)
+                // Iterate over the pages
+                for (int i = 0; i < jsonData.pages.Count; i++)
                 {
-                    foreach (Hyperlink hyperlink in page.hyperlinks)
+                    // Check if the current page matches the specified page number
+                    if (i == pageNum)
                     {
-                        float[] hyperlinkCoords = hyperlink.coordinates;
+                        Page page = jsonData.pages[i];
 
-                        float[] scale = CoordinateConverter.CalculateHyperlinkScale(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
-                                                                hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
-                        float[] offset = CoordinateConverter.CalculateHyperlinkOffset(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
-                                                                hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
+                        foreach (Hyperlink hyperlink in page.hyperlinks)
+                        {
+                            float[] hyperlinkCoords = hyperlink.coordinates;
 
-                        Debug.Log($"Hyperlink URI: {hyperlink.uri}");
-                        Debug.Log($"Scale - X: {scale[0]}, Z: {scale[1]}");
-                        Debug.Log($"Offset - X: {offset[0]}, Z: {offset[1]}");
+                            float[] scale = CoordinateConverter.CalculateHyperlinkScale(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
+                                                                                    hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
+                            float[] offset = CoordinateConverter.CalculateHyperlinkOffset(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
+                                                                                    hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
 
-                        Vector3 scaleVector3 = new Vector3(scale[0], 0.001f, scale[1]);
-                        Vector3 offsetVector3 = new Vector3(offset[0], 0.0f, offset[1]);
-                        OverlayData newOverlayData = new OverlayData(scaleVector3, offsetVector3, hyperlink.uri, "<random-id>");
-                        currentOverlayInformation.Add(newOverlayData);
+                            Debug.Log($"Hyperlink URI: {hyperlink.uri}");
+                            Debug.Log($"Scale - X: {scale[0]}, Z: {scale[1]}");
+                            Debug.Log($"Offset - X: {offset[0]}, Z: {offset[1]}");
+
+                            Vector3 scaleVector3 = new Vector3(scale[0], 0.001f, scale[1]);
+                            Vector3 offsetVector3 = new Vector3(offset[0], 0.0f, offset[1]);
+                            OverlayData newOverlayData = new OverlayData(scaleVector3, offsetVector3, hyperlink.uri, "<random-id>");
+                            currentOverlayInformation.Add(newOverlayData);
+                        }
                     }
                 }
 
