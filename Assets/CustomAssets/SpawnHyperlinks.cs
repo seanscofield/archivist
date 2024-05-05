@@ -18,6 +18,8 @@ public class SpawnHyperlinks : MonoBehaviour
     private List<GameObject> currentOverlays = new List<GameObject>();
 
     private string lastDetectedQRCodeData;
+    private string lastDetectedQRCodeUrl = "";
+    private int lastDetectedQRCodePageNum = -1;
 
 
     // Listen for the following events:
@@ -49,6 +51,8 @@ public class SpawnHyperlinks : MonoBehaviour
         // were previously spawned 
         if (data != lastDetectedQRCodeData)
         {
+            // TODO: Don't update `lastDetectedQRCodeData` if JSON not decoded properly
+
             // updated last detected QR code
             lastDetectedQRCodeData = data;
 
@@ -58,10 +62,9 @@ public class SpawnHyperlinks : MonoBehaviour
             string url = qrData.url;
             int page = qrData.page;
 
-            Debug.Log(url);
-            Debug.Log(page);
-
-            StartCoroutine(FetchJSONFromUrl(url, page));
+            if (url != lastDetectedQRCodeUrl || page != lastDetectedQRCodePageNum) {
+                StartCoroutine(FetchJSONFromUrl(url, page));
+            }
         }
     }
 
@@ -71,7 +74,7 @@ public class SpawnHyperlinks : MonoBehaviour
         
         foreach (var newImage in eventArgs.added)
         {
-            Debug.Log("Event: Image added!");
+            // Debug.Log("Event: Image added!");
             currentlyTrackedARImage = newImage;
             if (currentOverlays.Count == 0 && currentOverlayInformation.Count > 0)
             {
@@ -81,7 +84,7 @@ public class SpawnHyperlinks : MonoBehaviour
 
         foreach (var updatedImage in eventArgs.updated)
         {
-            Debug.Log("Event: Image updated!");
+            // Debug.Log("Event: Image updated!");
             if (currentOverlays.Count == 0 && currentOverlayInformation.Count > 0)
             {
                 SpawnOverlays();
@@ -90,7 +93,7 @@ public class SpawnHyperlinks : MonoBehaviour
 
         foreach (var removedImage in eventArgs.removed)
         {
-            Debug.Log("Event: Image removed!");
+            // Debug.Log("Event: Image removed!");
             currentlyTrackedARImage = null;
         }
     }
@@ -168,6 +171,9 @@ public class SpawnHyperlinks : MonoBehaviour
                 }
 
                 currentOverlays = new List<GameObject>();
+
+                lastDetectedQRCodeUrl = url;
+                lastDetectedQRCodePageNum = pageNum;
             }
         }
     }

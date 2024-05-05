@@ -59,10 +59,8 @@ public class OverlayManager
         List<OverlayData> overlayDataList = new List<OverlayData>();
 
         // Step 3: Iterate over each item in the nested array and create OverlayData objects
-        Debug.Log("HERE");
         foreach (var overlayDataItem in jsonDataWrapper.hyperlinks)
         {
-            Debug.Log("THERE");
             Debug.Log(overlayDataItem);
             OverlayData overlayData = overlayDataItem.ToOverlayData();
             overlayDataList.Add(overlayData);

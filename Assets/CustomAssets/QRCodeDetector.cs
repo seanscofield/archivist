@@ -40,8 +40,6 @@ public class QRCodeDetector : MonoBehaviour
             {
                 // If successful, launch an asynchronous conversion coroutine
                 lastAcquisitionTime = Time.time; // Update last acquisition time
-                Debug.Log("STARTING COROUTINE...");
-                Debug.Log(Time.time);
                 StartCoroutine(DecodeQRCode(image));
 
                 // Dispose the XRCpuImage after we're finished to prevent any memory leaks
@@ -98,7 +96,7 @@ public class QRCodeDetector : MonoBehaviour
         texture.Apply();
 
         // Dispose the request including raw data
-        Debug.Log("DISPOSING OF REQUEST...");
+        // Debug.Log("DISPOSING OF REQUEST...");
         request.Dispose();
 
         // Decode QR Code using ZXing
