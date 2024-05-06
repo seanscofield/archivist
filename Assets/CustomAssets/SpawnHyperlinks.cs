@@ -11,6 +11,8 @@ public class SpawnHyperlinks : MonoBehaviour
 
     [SerializeField] private GameObject hyperlinkOverlayPrefab;
 
+    private string url = "https://raw.githubusercontent.com/seanscofield/archivist/main/Assets/CustomAssets";
+
     private ARTrackedImage currentlyTrackedARImage;
 
     // Create a dictionary to store the hyperlink url and spatial coordinates of each AR hyperlink overlay
@@ -18,7 +20,7 @@ public class SpawnHyperlinks : MonoBehaviour
     private List<GameObject> currentOverlays = new List<GameObject>();
 
     private string lastDetectedQRCodeData;
-    private string lastDetectedQRCodeUrl = "";
+    private string lastDetectedQRCodeId = "";
     private int lastDetectedQRCodePageNum = -1;
 
 
@@ -38,7 +40,7 @@ public class SpawnHyperlinks : MonoBehaviour
     [System.Serializable]
     public class QRData
     {
-        public string url;
+        public string id;
         public int page;
     }
 
@@ -59,11 +61,11 @@ public class SpawnHyperlinks : MonoBehaviour
             // Parse JSON string to extract URL and page number
             QRData qrData = JsonUtility.FromJson<QRData>(data);
 
-            string url = qrData.url;
+            string id = qrData.id;
             int page = qrData.page;
 
-            if (url != lastDetectedQRCodeUrl || page != lastDetectedQRCodePageNum) {
-                StartCoroutine(FetchJSONFromUrl(url, page));
+            if (id != lastDetectedQRCodeId || page != lastDetectedQRCodePageNum) {
+                StartCoroutine(FetchJSONFromId(id, page));
             }
         }
     }
@@ -112,9 +114,13 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
-    IEnumerator FetchJSONFromUrl(string url, int pageNum)
+    IEnumerator FetchJSONFromId(string id, int pageNum)
     {
-        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        string fullUrl = $"{url}/{id}.json"; // Combine url variable with id to form the full URL
+
+        Debug.Log("Full url: " + fullUrl);
+
+        using (UnityWebRequest www = UnityWebRequest.Get(fullUrl))
         {
             yield return www.SendWebRequest();
 
@@ -122,8 +128,7 @@ public class SpawnHyperlinks : MonoBehaviour
             {
                 Debug.LogError($"Error fetching JSON from URL: {www.error}");
             }
-            else
-            {
+            else {
                 currentOverlayInformation = new List<OverlayData>();
 
                 ARData jsonData = JsonUtility.FromJson<ARData>(www.downloadHandler.text);
@@ -172,7 +177,7 @@ public class SpawnHyperlinks : MonoBehaviour
 
                 currentOverlays = new List<GameObject>();
 
-                lastDetectedQRCodeUrl = url;
+                lastDetectedQRCodeId = id;
                 lastDetectedQRCodePageNum = pageNum;
             }
         }
