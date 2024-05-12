@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8827507133693221261}
   - component: {fileID: 9059862139229853304}
   - component: {fileID: 4390495017579991893}
+  - component: {fileID: -2443858318938826879}
   m_Layer: 0
   m_Name: hyperlink-overlay
   m_TagString: Untagged
@@ -101,7 +102,20 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-2443858318938826879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3100121263147063693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbab2b3c0be2a46849cec85a3a506a06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  url: 

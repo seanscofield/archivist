@@ -12,6 +12,7 @@ public class SpawnHyperlinks : MonoBehaviour
     [SerializeField] private GameObject hyperlinkOverlayPrefab;
 
     private string url = "https://raw.githubusercontent.com/seanscofield/archivist/main/Assets/CustomAssets";
+    // private string url = "https://raw.githubusercontent.com/seanscofield/archivist_data";
 
     private ARTrackedImage currentlyTrackedARImage;
 
@@ -106,6 +107,13 @@ public class SpawnHyperlinks : MonoBehaviour
         {
             // Debug.Log()
             GameObject hyperlinkOverlay = Instantiate(hyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
+            
+            // Set the URL metadata
+            Metadata urlHolder = hyperlinkOverlay.GetComponent<Metadata>();
+            if (urlHolder != null)
+            {
+                urlHolder.url = overlayData.url;
+            }
             Vector3 offset = overlayData.offset;
             Vector3 scale = overlayData.scale;
             hyperlinkOverlay.transform.localPosition = offset;
