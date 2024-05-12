@@ -1,0 +1,15 @@
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\bin\Debug\net8.0\DatabaseJson.exe
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\bin\Debug\net8.0\DatabaseJson.deps.json
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\bin\Debug\net8.0\DatabaseJson.runtimeconfig.json
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\bin\Debug\net8.0\DatabaseJson.dll
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\bin\Debug\net8.0\DatabaseJson.pdb
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.AssemblyInfoInputs.cache
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.AssemblyInfo.cs
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.csproj.CoreCompileInputs.cache
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.sourcelink.json
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.dll
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\refint\DatabaseJson.dll
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.pdb
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\DatabaseJson.genruntimeconfig.cache
+E:\Projects\NGUI\archivist\Assets\Database\DatabaseJson\obj\Debug\net8.0\ref\DatabaseJson.dll

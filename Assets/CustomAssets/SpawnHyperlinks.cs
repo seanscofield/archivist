@@ -183,6 +183,46 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
+    // In Unity, the Update() method is automatically called by the engine every frame. 
+    // Therefore, you don't need to explicitly call the Update() method yourself. Instead, Unity will handle calling it for you.
+    private void Update()
+    {
+        HandleTouchInput();
+    }
+
+    private void HandleTouchInput()
+    {
+        // Check if there is any touch input
+        if (Input.touchCount > 0)
+        {
+            // Get the first touch
+            Touch touch = Input.GetTouch(0);
+
+            // Check if the touch phase is "began"
+            if (touch.phase == TouchPhase.Began)
+            {
+                // Perform a raycast to detect if the touch hits any hyperlink
+                Ray ray = Camera.main.ScreenPointToRay(touch.position);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    // Check if the hit object is a hyperlink
+                    GameObject hitObject = hit.collider.gameObject;
+                    if (currentOverlays.Contains(hitObject))
+                    {
+                        // Get the URL associated with the touched hyperlink
+                        int index = currentOverlays.IndexOf(hitObject);
+                        string url = currentOverlayInformation[index].url;
+
+                        // Open the URL in the device's browser
+                        Application.OpenURL(url);
+                    }
+                }
+            }
+        }
+    }
+
     // The below methods are sometimes useful for debugging.
     // void ListAllImages()
     // {
