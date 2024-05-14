@@ -25,48 +25,8 @@ public class Hyperlink
 
 public class CoordinateConverter : MonoBehaviour
 {
-private string jsonString = @"
-    {
-        ""ar_marker_coordinates"": [252.375, 73.5, 359.625, 180.75],
-        ""pages"": [
-            {
-                ""hyperlinks"": [
-                    {
-                        ""uri"": ""https://www.google.com"",
-                        ""coordinates"": [144.99790954589844, 214.0709228515625, 467.0020751953125, 226.7198486328125]
-                    }
-                ]
-            }
-        ]
-    }";
-
-    void Start()
-    {
-        ARData data = JsonUtility.FromJson<ARData>(jsonString);
-
-        float[] markerCoords = data.ar_marker_coordinates;
-
-        foreach (Page page in data.pages)
-        {
-            foreach (Hyperlink hyperlink in page.hyperlinks)
-            {
-                float[] hyperlinkCoords = hyperlink.coordinates;
-
-                float[] scale = CalculateHyperlinkScale(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
-                                                        hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
-                float[] offset = CalculateHyperlinkOffset(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
-                                                          hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
-
-                Debug.Log($"Hyperlink URI: {hyperlink.uri}");
-                Debug.Log($"Scale - X: {scale[0]}, Z: {scale[1]}");
-                Debug.Log($"Offset - X: {offset[0]}, Z: {offset[1]}");
-
-            }
-        }
-    }
-
     public static float[] CalculateHyperlinkOffset(float marker_x0, float marker_y0, float marker_x1, float marker_y1,
-                                     float hyperlink_x0, float hyperlink_y0, float hyperlink_x1, float hyperlink_y1)
+                                                   float hyperlink_x0, float hyperlink_y0, float hyperlink_x1, float hyperlink_y1)
     {
         float marker_width = marker_x1 - marker_x0;
         float marker_height = marker_y1 - marker_y0;
@@ -93,7 +53,7 @@ private string jsonString = @"
     }
 
     public static float[] CalculateHyperlinkScale(float marker_x0, float marker_y0, float marker_x1, float marker_y1,
-                                    float hyperlink_x0, float hyperlink_y0, float hyperlink_x1, float hyperlink_y1)
+                                                  float hyperlink_x0, float hyperlink_y0, float hyperlink_x1, float hyperlink_y1)
     {
         float marker_width = marker_x1 - marker_x0;
         float marker_height = marker_y1 - marker_y0;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Metadata : MonoBehaviour
+public class URLMetadata : MonoBehaviour
 {
     public string url;
 }

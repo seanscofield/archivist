@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class OverlayData
 {
+    public string id;
+    public string url;
     public Vector3 scale;
     public Vector3 offset;
-    public string url;
-    public string id;
 
-    public OverlayData(Vector3 scale, Vector3 offset, string url, string id)
+    public OverlayData(string id, string url, Vector3 scale, Vector3 offset)
     {
+        this.id = id;
+        this.url = url;
         this.scale = scale;
         this.offset = offset;
-        this.url = url;
-        this.id = id;
     }
 }
 
@@ -35,16 +35,16 @@ public class OverlayDataWrapper
 [System.Serializable]
 public class OverlayDataItem
 {
+    public string id;
+    public string url;
     public VectorData scale;
     public VectorData offset;
-    public string url;
-    public string id;
 
     public OverlayData ToOverlayData()
     {
         Vector3 scaleVector = new Vector3(scale.x, scale.y, scale.z);
         Vector3 offsetVector = new Vector3(offset.x, offset.y, offset.z);
-        return new OverlayData(scaleVector, offsetVector, url, id);
+        return new OverlayData(id,  url, scaleVector, offsetVector);
     }
 }
 
@@ -61,7 +61,6 @@ public class OverlayManager
         // Step 3: Iterate over each item in the nested array and create OverlayData objects
         foreach (var overlayDataItem in jsonDataWrapper.hyperlinks)
         {
-            Debug.Log(overlayDataItem);
             OverlayData overlayData = overlayDataItem.ToOverlayData();
             overlayDataList.Add(overlayData);
         }
