@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
-public class Tapping : MonoBehaviour
+public class TapListener : MonoBehaviour
 {
     public Image imageDisplay; // Reference to the UI Image object to display the image
 

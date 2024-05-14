@@ -13,7 +13,6 @@ public class SpawnHyperlinks : MonoBehaviour
     public Image imageDisplay; // Reference to the UI Image object to display the image
 
     private ARTrackedImage currentlyTrackedARImage;
-    private string url = "https://raw.githubusercontent.com/seanscofield/archivist/main/Assets/CustomAssets";
 
     // List to store the hyperlink url and spatial coordinates of each AR hyperlink overlay
     private List<OverlayData> currentOverlayInformation = new List<OverlayData>();
@@ -32,13 +31,6 @@ public class SpawnHyperlinks : MonoBehaviour
     private void OnDisable() {
         m_TrackedImageManager.trackedImagesChanged -= OnChanged;
         QRCodeDetector.QRCodeDetectedEvent -= OnQRCodeDetected;
-    }
-
-    [System.Serializable]
-    public class QRData
-    {
-        public string id;
-        public int page;
     }
 
     private void OnQRCodeDetected(string data)
@@ -135,10 +127,6 @@ public class SpawnHyperlinks : MonoBehaviour
                                                                             hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
                     float[] offset = CoordinateConverter.CalculateHyperlinkOffset(markerCoords[0], markerCoords[1], markerCoords[2], markerCoords[3],
                                                                             hyperlinkCoords[0], hyperlinkCoords[1], hyperlinkCoords[2], hyperlinkCoords[3]);
-
-                    Debug.Log($"Hyperlink URI: {hyperlink.uri}");
-                    Debug.Log($"Scale - X: {scale[0]}, Z: {scale[1]}");
-                    Debug.Log($"Offset - X: {offset[0]}, Z: {offset[1]}");
 
                     Vector3 scaleVector3 = new Vector3(scale[0], 0.001f, scale[1]);
                     Vector3 offsetVector3 = new Vector3(offset[0], 0.0f, offset[1]);
