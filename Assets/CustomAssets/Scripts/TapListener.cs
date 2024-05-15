@@ -3,6 +3,8 @@ using System.Collections;
 
 /* This script makes it so that whenever a user taps on a hyperlink
  * overlay, we open a browser page and navigate to that hyperlink's url.
+ * Note that this implementation currently uses Unity's legacy Input system
+ * rather than the newer system for registering touchscreen taps.
  */
 public class TapListener : MonoBehaviour
 {
