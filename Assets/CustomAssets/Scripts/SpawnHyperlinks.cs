@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
+using System.Threading.Tasks;
 
 /* This script listens for notifications about newly detected QR codes
  * and newly tracked AR markers, and spawns AR hyperlink "overlays"
@@ -18,6 +19,9 @@ public class SpawnHyperlinks : MonoBehaviour
     [SerializeField] public GameObject imageHyperlinkOverlayPrefab;
     [SerializeField] public GameObject legendPrefab;
 
+    private JsonBinHyperlinkDataFetcher jsonBinHyperlinkDataFetcher = new JsonBinHyperlinkDataFetcher();
+    private HyperlinkDataFetcher hyperlinkDataFetcher = new HyperlinkDataFetcher();
+
     private ARTrackedImage currentlyTrackedARImage;
 
     // List to store the hyperlink url and spatial coordinates of each AR hyperlink overlay
@@ -27,6 +31,23 @@ public class SpawnHyperlinks : MonoBehaviour
     private string lastDetectedQRCodeData;
     private string lastDetectedQRCodeId = "";
     private int lastDetectedQRCodePageNum = -1;
+
+    public enum DataSource
+    {
+        GitHub,
+        JsonBin
+    }
+
+    public DataSource hyperlinkDataSource;
+
+    private void FetchHyperlinkData(string id, int pageNum) {
+        if (hyperlinkDataSource == DataSource.GitHub) {
+            StartCoroutine(hyperlinkDataFetcher.FetchJSONFromId(id, pageNum, ProcessHyperlinkData));
+        } else {
+            Task t1 = new Task(() => jsonBinHyperlinkDataFetcher.FetchJSONFromId(id, pageNum, ProcessHyperlinkData));
+            t1.Start();
+        }
+    }
 
     // Listen for QR code detection events & AR image marker tracking events
     private void OnEnable() {
@@ -56,7 +77,7 @@ public class SpawnHyperlinks : MonoBehaviour
             int page = qrData.page;
 
             if (id != lastDetectedQRCodeId || page != lastDetectedQRCodePageNum) {
-                StartCoroutine(HyperlinkDataFetcher.FetchJSONFromId(id, page, processHyperlinkData));
+                FetchHyperlinkData(id, page);
             }
         }
     }
@@ -87,7 +108,7 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
-    private void processHyperlinkData(string id, int pageNum, ARDocumentData arDocumentData) {
+    private void ProcessHyperlinkData(string id, int pageNum, ARDocumentData arDocumentData) {
         currentOverlayInformation = new List<OverlayData>();
         float[] markerCoords = arDocumentData.ar_marker_coordinates;
 
