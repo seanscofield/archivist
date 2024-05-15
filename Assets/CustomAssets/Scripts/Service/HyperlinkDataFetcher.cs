@@ -3,11 +3,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public static class HyperlinkDataFetcher
+public class HyperlinkDataFetcher
 {
-    private static string url = "https://raw.githubusercontent.com/seanscofield/archivist/main/Assets/CustomAssets";
+    private string url = "https://raw.githubusercontent.com/seanscofield/archivist/main/Assets/CustomAssets";
 
-    public static IEnumerator FetchJSONFromId(string id, int pageNum, Action<string, int, ARDocumentData> processHyperlinkData)
+    public IEnumerator FetchJSONFromId(string id, int pageNum, Action<string, int, ARDocumentData> processHyperlinkData)
     {
         string fullUrl = $"{url}/{id}.json";
 

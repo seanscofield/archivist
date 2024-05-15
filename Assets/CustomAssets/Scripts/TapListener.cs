@@ -24,7 +24,6 @@ public class TapListener : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
             RaycastHit hit;
 
-            // Perform the raycast
             if (Physics.Raycast(ray, out hit))
             {
                 // Check if the object has the URLHolder component
