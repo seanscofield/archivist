@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Samples.unity
     guid: c1b45f267f24640b284c1b6241bcd4eb
   - enabled: 1
-    path: Assets/CustomAssets/Hyperlinks.unity
+    path: Assets/CustomAssets/Scenes/Hyperlinks.unity
     guid: f23b2ff8210ca48238b06d47acfcb59d
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 6ee72d15cf39dd748a13eac57397b9af,

@@ -5,12 +5,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 
+/* This script listens for notifications about newly detected QR codes
+ * and newly tracked AR markers, and spawns AR hyperlink "overlays"
+ * on top of the hyperlinks within a document based on the data it
+ * retrieves from the dynamic QR code.
+ */
 public class SpawnHyperlinks : MonoBehaviour
 {
     [SerializeField] public ARTrackedImageManager m_TrackedImageManager;
-    [SerializeField] public GameObject hyperlinkOverlayPrefab;
-    public GameObject image;
-    public Image imageDisplay; // Reference to the UI Image object to display the image
+    [SerializeField] public GameObject internalHyperlinkOverlayPrefab;
+    [SerializeField] public GameObject externalHyperlinkOverlayPrefab;
+    [SerializeField] public GameObject imageHyperlinkOverlayPrefab;
+    [SerializeField] public GameObject legendPrefab;
 
     private ARTrackedImage currentlyTrackedARImage;
 
@@ -24,12 +30,12 @@ public class SpawnHyperlinks : MonoBehaviour
 
     // Listen for QR code detection events & AR image marker tracking events
     private void OnEnable() {
-        m_TrackedImageManager.trackedImagesChanged += OnChanged;
+        m_TrackedImageManager.trackedImagesChanged += OnTrackedImagesChanged;
         QRCodeDetector.QRCodeDetectedEvent += OnQRCodeDetected;
     }
 
     private void OnDisable() {
-        m_TrackedImageManager.trackedImagesChanged -= OnChanged;
+        m_TrackedImageManager.trackedImagesChanged -= OnTrackedImagesChanged;
         QRCodeDetector.QRCodeDetectedEvent -= OnQRCodeDetected;
     }
 
@@ -55,23 +61,16 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
-    private void OnChanged(ARTrackedImagesChangedEventArgs eventArgs)
+    private void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)
     {
         // TODO: Handle case when more than 1 AR marker image is visible (shouldn't happen in most cases)
-        
         foreach (var newImage in eventArgs.added)
         {
             currentlyTrackedARImage = newImage;
-            
             if (currentOverlays.Count == 0 && currentOverlayInformation.Count > 0)
             {
                 SpawnOverlays();
             }
-
-            image.transform.SetParent(newImage.transform, true);
-            imageDisplay.transform.SetParent(newImage.transform, true);
-            image.transform.localPosition = new Vector3(0, 0, 0);
-            imageDisplay.transform.localPosition = new Vector3(0, 0, 0);
         }
 
         foreach (var updatedImage in eventArgs.updated)
@@ -88,36 +87,17 @@ public class SpawnHyperlinks : MonoBehaviour
         }
     }
 
-    private void SpawnOverlays() {
-        foreach (var overlayData in currentOverlayInformation)
-        {
-            GameObject hyperlinkOverlay = Instantiate(hyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
-            
-            // Set the URL metadata
-            URLMetadata urlHolder = hyperlinkOverlay.GetComponent<URLMetadata>();
-            if (urlHolder != null)
-            {
-                urlHolder.url = overlayData.url;
-            }
-            Vector3 offset = overlayData.offset;
-            Vector3 scale = overlayData.scale;
-            hyperlinkOverlay.transform.localPosition = offset;
-            hyperlinkOverlay.transform.localScale = scale;
-            currentOverlays.Add(hyperlinkOverlay);
-        }
-    }
-
-    private void processHyperlinkData(string id, int pageNum, ARData arData) {
+    private void processHyperlinkData(string id, int pageNum, ARDocumentData arDocumentData) {
         currentOverlayInformation = new List<OverlayData>();
-        float[] markerCoords = arData.ar_marker_coordinates;
+        float[] markerCoords = arDocumentData.ar_marker_coordinates;
 
         // Iterate over the pages
-        for (int i = 0; i < arData.pages.Count; i++)
+        for (int i = 0; i < arDocumentData.pages.Count; i++)
         {
             // Check if the current page matches the specified page number
             if (i == pageNum)
             {
-                Page page = arData.pages[i];
+                Page page = arDocumentData.pages[i];
 
                 foreach (Hyperlink hyperlink in page.hyperlinks)
                 {
@@ -130,7 +110,7 @@ public class SpawnHyperlinks : MonoBehaviour
 
                     Vector3 scaleVector3 = new Vector3(scale[0], 0.001f, scale[1]);
                     Vector3 offsetVector3 = new Vector3(offset[0], 0.0f, offset[1]);
-                    OverlayData newOverlayData = new OverlayData("<random-id>", hyperlink.uri, scaleVector3, offsetVector3);
+                    OverlayData newOverlayData = new OverlayData("Random ID", hyperlink.uri, scaleVector3, offsetVector3);
                     currentOverlayInformation.Add(newOverlayData);
                 }
             }
@@ -151,5 +131,36 @@ public class SpawnHyperlinks : MonoBehaviour
 
         lastDetectedQRCodeId = id;
         lastDetectedQRCodePageNum = pageNum;
+    }
+
+    private void SpawnOverlays() {
+        foreach (var overlayData in currentOverlayInformation)
+        {
+            string url = overlayData.url;
+            Vector3 offset = overlayData.offset;
+            Vector3 scale = overlayData.scale;
+
+            GameObject hyperlinkOverlay;
+            if (URLAnalyzer.HasImageExtension(url)) {
+                hyperlinkOverlay = Instantiate(imageHyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
+            } else if (URLAnalyzer.HaveSameRootDomain(url, "photographylife.com")) {
+                hyperlinkOverlay = Instantiate(internalHyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
+            } else {
+                hyperlinkOverlay = Instantiate(externalHyperlinkOverlayPrefab, currentlyTrackedARImage.transform);
+            }
+
+            hyperlinkOverlay.transform.localPosition = offset;
+            hyperlinkOverlay.transform.localScale = scale;
+            currentOverlays.Add(hyperlinkOverlay);
+
+            // Set the URL metadata on the newly created overlay
+            URLMetadata urlHolder = hyperlinkOverlay.GetComponent<URLMetadata>();
+            urlHolder.url = url;
+
+            GameObject legendOverlay = Instantiate(legendPrefab, currentlyTrackedARImage.transform);
+            legendOverlay.transform.localPosition = new Vector3(-0.11f, 0, 0);
+            legendOverlay.transform.localScale = currentlyTrackedARImage.transform.localScale;
+            legendOverlay.transform.Rotate(90f, 0f, 0f, Space.Self);
+        }
     }
 }

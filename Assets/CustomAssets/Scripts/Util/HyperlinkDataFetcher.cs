@@ -7,7 +7,7 @@ public static class HyperlinkDataFetcher
 {
     private static string url = "https://raw.githubusercontent.com/seanscofield/archivist/main/Assets/CustomAssets";
 
-    public static IEnumerator FetchJSONFromId(string id, int pageNum, Action<string, int, ARData> processHyperlinkData)
+    public static IEnumerator FetchJSONFromId(string id, int pageNum, Action<string, int, ARDocumentData> processHyperlinkData)
     {
         string fullUrl = $"{url}/{id}.json";
 
@@ -20,8 +20,8 @@ public static class HyperlinkDataFetcher
                 Debug.LogError($"Error fetching JSON from URL: {www.error}");
             }
             else {
-                ARData arData = JsonUtility.FromJson<ARData>(www.downloadHandler.text);
-                processHyperlinkData(id, pageNum, arData);
+                ARDocumentData arDocumentData = JsonUtility.FromJson<ARDocumentData>(www.downloadHandler.text);
+                processHyperlinkData(id, pageNum, arDocumentData);
             }
         }
     }

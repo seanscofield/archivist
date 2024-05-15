@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/** This script contains some utility functions for converting PyMuPDF
+  * coordinates to Unity, world-space coordinates (which seems to be in meters).
+  * In, PyMuPDF each atomic unit is 1/72 inches.
+  */
 public class CoordinateConverter : MonoBehaviour
 {
     public static float[] CalculateHyperlinkOffset(float marker_x0, float marker_y0, float marker_x1, float marker_y1,

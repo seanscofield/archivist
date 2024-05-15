@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // Define classes to represent JSON structure
 [System.Serializable]
-public class ARData
+public class ARDocumentData
 {
     public float[] ar_marker_coordinates;
     public List<Page> pages;
