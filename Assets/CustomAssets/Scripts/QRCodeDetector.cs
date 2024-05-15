@@ -37,6 +37,11 @@ public class QRCodeDetector : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        
+    }
+
     void AsynchronousDetectQRCode()
     {
         // Acquire an XRCpuImage
