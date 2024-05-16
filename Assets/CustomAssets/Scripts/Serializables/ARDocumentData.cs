@@ -21,3 +21,10 @@ public class Hyperlink
     public string uri;
     public float[] coordinates;
 }
+
+// Define a wrapper class to handle optional "record" item
+[System.Serializable]
+public class RecordWrapper<T>
+{
+    public T record;
+}
