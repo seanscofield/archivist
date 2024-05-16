@@ -1,0 +1,12 @@
+pygithub
+os
+pdfkit
+base64
+PyPDF2
+shutil
+json
+qrcode
+uuid
+PyMuPDF
+reportlab
+PyQt5
